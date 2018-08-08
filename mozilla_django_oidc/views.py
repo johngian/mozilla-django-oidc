@@ -112,9 +112,12 @@ def get_next_url(request, redirect_field_name):
         # NOTE(willkg): Django 1.11+ allows us to require https, too.
         if django.VERSION >= (1, 11):
             kwargs['require_https'] = request.is_secure()
-        # NOTE(robhudson): Django 2.1 drops support for the `host` kwarg.
+        # NOTE(robhudson): Django 2.1 drops support for the `host` kwarg uses `allowed_hosts`
+        host = request.get_host()
         if django.VERSION <= (2, 0):
-            kwargs['host'] = request.get_host()
+            kwargs['host'] = host
+        else:
+            kwargs['allowed_hosts'] = host
         is_safe = is_safe_url(**kwargs)
         if is_safe:
             return next_url
